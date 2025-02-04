@@ -3,23 +3,22 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Courses', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
       courseId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+      autoIncrement: true,
       },
       title: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       description: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
+        allowNull: false,
       },
       videoUrl: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       createdAt: {
         allowNull: false,

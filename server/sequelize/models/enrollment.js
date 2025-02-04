@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Enrollment extends Model {
     /**
@@ -33,6 +34,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: false,
       defaultValue: 0.0,
+    },
+    enrolledAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.NOW
     }
   }, {
     sequelize,
