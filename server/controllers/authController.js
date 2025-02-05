@@ -13,7 +13,7 @@ const register = async (req, res) => {
             return res.status(400).json({ message: 'This user already exists' });
         }
 
-        const hashedPassword = bcrypt.hash(password, saltRounds);
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const newUser = await User.create ({
             name: name,
@@ -21,10 +21,10 @@ const register = async (req, res) => {
             password: hashedPassword,
             role: role || 'Learner',
         })
-
+        
         res.status(201).json({ message: 'User registered successfully', user: newUser })
     } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error', error: error })
+        res.status(500).json({ error: 'Internal Server Error', error: error.message })
     }
 }
 
@@ -44,7 +44,7 @@ const login = async (req, res) => {
         const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECTRET, { expiresIn: '1h' })
         res.json({ message: 'User successfully logged in', token})
     } catch (error) {
-        res.status(500).json({ Error: 'Internal server error', error: error });
+        res.status(500).json({ Error: 'Internal server error', error: error.message });
     }
 }
 

@@ -1,4 +1,5 @@
-const { Enrollment, Course, User } = require('../sequelize/models');
+const { Enrollment, Course, User } = require('../sequelize/models');;
+const generateCertificate = require('../utils/certificateGenerator')
 
 const enrollInCourse = async (req, res) => {
     const { courseId } = req.body;
@@ -59,17 +60,26 @@ const updateProgress = async (req, res) => {
             return res.status(400).json({ message: 'Progress must be between 0 and 100' });
         }
 
-        const enrollment = await Enrollment.findOne({ where: { userId, courseId } });
+        const enrollment = await Enrollment.findOne({ where: { userId, courseId }, include: [User, Course] });
         if (!enrollment) {
             return res.status(404).json({ message: 'Enrollment not found' });
         }
 
-        await enrollment.update({ progress });
+        let certificateUrl = enrollment.certificateUrl;
+
+        
+        if (progress === 100 && !certificateUrl) {
+            certificateUrl = generateCertificate(userId, enrollment.User.name, courseId, enrollment.Course.title);
+        }
+
+        await enrollment.update({ progress, certificateUrl });
+
         res.json({ message: 'Progress updated successfully', enrollment });
     } catch (error) {
         res.status(500).json({ message: 'Error updating progress', error: error.message });
     }
 };
+
 
 module.exports = {
     enrollInCourse,

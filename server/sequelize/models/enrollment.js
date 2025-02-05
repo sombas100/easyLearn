@@ -39,6 +39,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: Sequelize.NOW
+    },
+    certificateUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
     }
   }, {
     sequelize,
