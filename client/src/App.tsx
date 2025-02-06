@@ -1,17 +1,14 @@
-import Hero from "./components/Hero";
 import Navbar from "./components/Navbar";
-import Sponsor from "./components/Sponsor";
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
 
 function App() {
   return (
     <>
       <Navbar />
-      <div className="app">
-        <Hero />
-      </div>
-      <div className="app">
-        <Sponsor />
-      </div>
+      <Routes>
+        <Route path="/" element={<Home />}></Route>
+      </Routes>
     </>
   );
 }
