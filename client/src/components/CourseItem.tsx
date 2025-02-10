@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 interface CourseProps {
   course: {
@@ -54,26 +55,28 @@ const CourseItem: React.FC<CourseProps> = ({ course }) => {
       <p style={{ color: "#6b7280", marginTop: "8px" }}>
         {course.description.substring(0, 100)}...
       </p>
-      <button
-        style={{
-          marginTop: "12px",
-          backgroundColor: "#2563eb",
-          color: "#fff",
-          padding: "10px 16px",
-          borderRadius: "6px",
-          border: "none",
-          cursor: "pointer",
-          transition: "background-color 0.3s ease",
-        }}
-        onMouseEnter={(e) =>
-          (e.currentTarget.style.backgroundColor = "#1e40af")
-        }
-        onMouseLeave={(e) =>
-          (e.currentTarget.style.backgroundColor = "#2563eb")
-        }
-      >
-        View Course
-      </button>
+      <Link to={`/courses/${course.courseId}`}>
+        <button
+          style={{
+            marginTop: "12px",
+            backgroundColor: "#2563eb",
+            color: "#fff",
+            padding: "10px 16px",
+            borderRadius: "6px",
+            border: "none",
+            cursor: "pointer",
+            transition: "background-color 0.3s ease",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "#1e40af")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "#2563eb")
+          }
+        >
+          View Course
+        </button>
+      </Link>
     </div>
   );
 };
