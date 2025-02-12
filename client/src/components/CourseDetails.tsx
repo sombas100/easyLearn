@@ -5,6 +5,7 @@ import { fetchCourseById } from "@/redux/slices/courseSlice";
 import { fetchLessons } from "@/redux/slices/lessonSlice";
 import { RootState, AppDispatch } from "@/redux/store";
 import { Spinner } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
 const CourseDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -36,30 +37,96 @@ const CourseDetails = () => {
   if (!course) return <p>No course found.</p>;
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px", maxWidth: "800px", margin: "auto" }}>
       <h1
         style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}
       >
         {course.title}
       </h1>
-      <i>{course.description}</i>
+      <p style={{ fontSize: "16px", color: "#555", marginBottom: "20px" }}>
+        {course.description}
+      </p>
 
       {course.videoUrl && (
-        <div>
+        <div style={{ marginBottom: "30px" }}>
           <h3>Course Overview</h3>
-          <video width="600" controls>
+          <video width="100%" controls>
             <source src={course.videoUrl} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
       )}
 
-      <h2>Lessons</h2>
-      <ul>
-        {lessons.map((lesson) => (
-          <li key={lesson.lessonId}>{lesson.title}</li>
-        ))}
-      </ul>
+      <h2
+        style={{ fontSize: "22px", fontWeight: "bold", marginBottom: "10px" }}
+      >
+        Lessons
+      </h2>
+
+      <div style={{ display: "grid", gap: "15px" }}>
+        {lessons.length > 0 ? (
+          lessons.map((lesson) => (
+            <div
+              key={lesson.lessonId}
+              style={{
+                padding: "15px",
+                borderRadius: "8px",
+                boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
+                background: "#ffffff",
+                transition: "transform 0.2s ease-in-out",
+                border: "1px solid #ddd",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.transform = "scale(1.03)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.transform = "scale(1)")
+              }
+            >
+              <div>
+                <h3 style={{ fontSize: "18px", margin: "0" }}>
+                  {lesson.title}
+                </h3>
+                <p
+                  style={{ fontSize: "14px", color: "#666", marginTop: "5px" }}
+                >
+                  {lesson.content.length > 80
+                    ? lesson.content.substring(0, 80) + "..."
+                    : lesson.content}
+                </p>
+              </div>
+              <Link to={`/lessons/${lesson.lessonId}`}>
+                <button
+                  style={{
+                    backgroundColor: "#007BFF",
+                    color: "#fff",
+                    border: "none",
+                    padding: "10px 15px",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    transition: "background 0.2s",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#0056b3")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#007BFF")
+                  }
+                >
+                  View Lesson
+                </button>
+              </Link>
+            </div>
+          ))
+        ) : (
+          <p style={{ textAlign: "center", color: "#777" }}>
+            No lessons available.
+          </p>
+        )}
+      </div>
     </div>
   );
 };

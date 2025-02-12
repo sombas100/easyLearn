@@ -2,7 +2,7 @@ const express = require('express');
 const { createCourse, getAllCourses, getCourse, updateCourse, deleteCourse } = require('../controllers/courseController');
 const {authMiddleware ,adminMiddleware } = require('../middleware/authMiddleware');
 const router = express.Router();
-const {Lesson} = require('../sequelize/models')
+const { Lesson } = require('../sequelize/models')
 
 router.post('/',authMiddleware, adminMiddleware, createCourse);
 router.get('/', getAllCourses);
