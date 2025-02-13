@@ -21,3 +21,16 @@ export interface Course {
     videoUrl: string;
     lessons: Lesson[];
 }
+
+export interface Enrollment {
+    enrollmentId: number;
+    user: { 
+        name: string, 
+        email: string 
+    }
+    course: {
+        title: string
+    }
+    progress: number;
+    certificateUrl?: string;
+}

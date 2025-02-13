@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { addCourse } from "@/redux/slices/courseSlice";
 import { AppDispatch } from "@/redux/store";
 import { useNavigate } from "react-router-dom";
+import { FaLongArrowAltLeft } from "react-icons/fa";
 
 const AddCourse = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -30,6 +31,14 @@ const AddCourse = () => {
     <Box p={6}>
       <Heading size="lg" mb={4}>
         Add New Course
+      </Heading>
+      <Heading size="lg" mb={4}>
+        <button
+          onClick={() => navigate("/admin/courses")}
+          className="cursor-pointer"
+        >
+          <FaLongArrowAltLeft size={24} />
+        </button>
       </Heading>
       <VStack as="form" gap={4} onSubmit={handleSubmit}>
         <Input

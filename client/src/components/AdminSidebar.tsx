@@ -1,16 +1,20 @@
 import { Box, VStack, Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
+import { AppDispatch, RootState } from "@/redux/store";
 import { logout } from "@/redux/slices/authSlice";
 import { CiLogout } from "react-icons/ci";
+import { ToastContainer, toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.auth);
 
   const handleLogout = () => {
     dispatch(logout());
+    toast.success(`${user?.name} has successfully logged out`);
     navigate("/login");
   };
 
@@ -34,6 +38,9 @@ const AdminSidebar = () => {
         <Button w="full" onClick={() => navigate("/admin/users")}>
           Manage Users
         </Button>
+        <Button w="full" onClick={() => navigate("/admin/enrollments")}>
+          Manage Enrollments
+        </Button>
         <Button w="full" onClick={() => navigate("/")}>
           Home page
         </Button>
@@ -50,7 +57,7 @@ const AdminSidebar = () => {
             borderRadius: "5px",
             cursor: "pointer",
             fontWeight: "bold",
-            marginTop: "550px",
+            marginTop: "500px",
             transition: "background 0.3s ease",
           }}
           onClick={handleLogout}
@@ -64,6 +71,7 @@ const AdminSidebar = () => {
           Logout <CiLogout style={{ marginLeft: "7px" }} />
         </button>
       </VStack>
+      <ToastContainer />
     </Box>
   );
 };

@@ -6,7 +6,6 @@ import { RootState } from "@/redux/store";
 const AdminDashboard = () => {
   const { user } = useSelector((state: RootState) => state.auth);
 
-  console.log("admin info:", user);
   return (
     <Box display="flex" minH="100vh">
       {/* Sidebar */}
@@ -17,27 +16,49 @@ const AdminDashboard = () => {
         <Heading size="lg" mb={4}>
           Admin Dashboard
         </Heading>
-        <Text fontSize="xl">Welcome, {user?.name}!</Text>
+        <Text fontSize="xl" mb={4}>
+          Welcome, {user?.name}!
+        </Text>
 
-        {/* Dashboard Stats */}
-        <SimpleGrid columns={3} gap={6} mt={6}>
-          <Box bg="white" p={6} borderRadius="md" shadow="md">
-            <Text fontSize="2xl" fontWeight="bold">
+        {/* Responsive Dashboard Stats */}
+        <SimpleGrid columns={{ base: 1, sm: 2, md: 2, lg: 3 }} gap={6} mt={6}>
+          <Box
+            bg="white"
+            p={6}
+            borderRadius="md"
+            shadow="md"
+            textAlign="center"
+          >
+            <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="bold">
               100
             </Text>
-            <Text>Registered Users</Text>
+            <Text fontSize={{ base: "sm", md: "md" }}>Registered Users</Text>
           </Box>
-          <Box bg="white" p={6} borderRadius="md" shadow="md">
-            <Text fontSize="2xl" fontWeight="bold">
+
+          <Box
+            bg="white"
+            p={6}
+            borderRadius="md"
+            shadow="md"
+            textAlign="center"
+          >
+            <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="bold">
               25
             </Text>
-            <Text>Courses Available</Text>
+            <Text fontSize={{ base: "sm", md: "md" }}>Courses Available</Text>
           </Box>
-          <Box bg="white" p={6} borderRadius="md" shadow="md">
-            <Text fontSize="2xl" fontWeight="bold">
+
+          <Box
+            bg="white"
+            p={6}
+            borderRadius="md"
+            shadow="md"
+            textAlign="center"
+          >
+            <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="bold">
               500
             </Text>
-            <Text>Enrollments</Text>
+            <Text fontSize={{ base: "sm", md: "md" }}>Enrollments</Text>
           </Box>
         </SimpleGrid>
       </Box>
