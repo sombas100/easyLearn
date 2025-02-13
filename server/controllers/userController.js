@@ -1,8 +1,7 @@
-const express = require('express');
-const { User } = require('../sequelize/models/user')
+const { User } = require('../sequelize/models')
 
 const getAllUsers = async (req, res) => {
-    if (req.user.role !== 'Admin') return res.status(403).json({ message: 'Forbidden' })
+    if (!req.user || req.user.role !== 'Admin') return res.status(403).json({ message: 'Forbidden' })
     
         try {
             const users = await User.findAll();
@@ -11,7 +10,7 @@ const getAllUsers = async (req, res) => {
             }
             res.json(users)
         } catch (error) {
-            res.status(500).json({ message: 'Internal server error', error: error})
+            res.status(500).json({ message: 'Internal server error', error: error.message})
         }
 }
 

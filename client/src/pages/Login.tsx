@@ -13,6 +13,7 @@ import { login } from "@/redux/slices/authSlice";
 import { AppDispatch } from "@/redux/store";
 import { loginUser } from "@/api/auth";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 const Login = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -30,7 +31,8 @@ const Login = () => {
       dispatch(login({ user: data.user, token: data.token }));
       navigate("/");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Login failed");
+      toast.error(err.response?.data?.message || "Login failed");
+      setError(err.message);
     }
   };
 
@@ -71,6 +73,7 @@ const Login = () => {
           </Text>
         </VStack>
       </Box>
+      <ToastContainer />
     </Box>
   );
 };

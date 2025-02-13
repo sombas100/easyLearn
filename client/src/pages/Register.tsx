@@ -10,6 +10,7 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "@/api/auth";
+import { ToastContainer, toast } from "react-toastify";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -23,10 +24,11 @@ const Register = () => {
     e.preventDefault();
     try {
       await registerUser(name, email, password);
-      alert("Registration successful! Please log in.");
+      toast.success("Registration successful! Please log in.");
       navigate("/login");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Registration failed");
+      toast.error(err.response?.data?.message || "Registration failed");
+      setError(err.message);
     }
   };
 
@@ -73,6 +75,7 @@ const Register = () => {
           </Text>
         </VStack>
       </Box>
+      <ToastContainer />
     </Box>
   );
 };

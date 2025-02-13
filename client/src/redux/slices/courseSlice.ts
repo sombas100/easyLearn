@@ -28,6 +28,22 @@ export const fetchCourseById = createAsyncThunk(
     }
 );
 
+export const addCourse = createAsyncThunk('courses/addCourse', async (courseData: Omit<Course, 'courseId'>) => {
+    const res = await axios.post('http://localhost:3000/api/courses', courseData);
+    const data = res.data;
+    return data;
+})
+
+export const updateCourse = createAsyncThunk("courses/updateCourse", async ({ id, courseData }: { id: number; courseData: Partial<Course> }) => {
+    const res = await axios.put(`http://localhost:3000/api/courses/${id}`, courseData);
+    return res.data;
+});
+
+export const deleteCourse = createAsyncThunk("courses/deleteCourse", async (id: number) => {
+    await axios.delete(`http://localhost:3000/api/courses/${id}`);
+    return id;
+});
+
 const courseSlice = createSlice({
     name: 'courses',
     initialState,
@@ -57,7 +73,17 @@ const courseSlice = createSlice({
             .addCase(fetchCourseById.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message || 'Failed to fetch course';
-            });
+            })
+            .addCase(deleteCourse.fulfilled, (state, action: PayloadAction<number>) => {
+                state.courses = state.courses.filter((course) => course.courseId !== action.payload);
+              })
+              .addCase(addCourse.fulfilled, (state, action: PayloadAction<Course>) => {
+                state.courses.push(action.payload);
+              })
+              .addCase(updateCourse.fulfilled, (state, action: PayloadAction<Course>) => {
+                const index = state.courses.findIndex((course) => course.courseId === action.payload.courseId);
+                if (index !== -1) state.courses[index] = action.payload;
+              });
     }
 })
 

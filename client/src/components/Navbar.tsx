@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/redux/store";
 import { logout } from "@/redux/slices/authSlice";
+import { ToastContainer, toast } from "react-toastify";
 
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -13,6 +14,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const handleLogout = () => {
     dispatch(logout());
+    toast.success(`${user?.name} has successfully logged out`);
   };
   console.log("redux user info:", user);
   return (
@@ -30,13 +32,13 @@ const Navbar = () => {
           {isAuthenticated ? (
             <>
               <Text fontSize="lg" fontWeight="bold">
-                {user ? (
-                  <p>
-                    Welcome{" "}
-                    <span className="text-sky-400 font-bold">{user.name}</span>!
-                  </p>
-                ) : (
-                  ""
+                {user?.role === "Admin" && (
+                  <Button
+                    colorScheme="blue"
+                    onClick={() => navigate("/admin/dashboard")}
+                  >
+                    Admin Dashboard
+                  </Button>
                 )}
               </Text>
               <Button colorScheme="red" onClick={handleLogout}>
@@ -62,6 +64,7 @@ const Navbar = () => {
           )}
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
