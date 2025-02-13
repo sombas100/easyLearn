@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCourseById } from "@/redux/slices/courseSlice";
@@ -6,11 +6,18 @@ import { fetchLessons } from "@/redux/slices/lessonSlice";
 import { RootState, AppDispatch } from "@/redux/store";
 import { Spinner } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import { enrollInCourse } from "@/redux/slices/enrollmentSlice";
+import { Button } from "@chakra-ui/react";
+import { ToastContainer, toast } from "react-toastify";
 
 const CourseDetails = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
+  const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
 
+  const { user, isAuthenticated } = useSelector(
+    (state: RootState) => state.auth
+  );
   const {
     courses,
     loading: courseLoading,
@@ -31,6 +38,14 @@ const CourseDetails = () => {
     }
   }, [id, dispatch]);
 
+  const handleEnroll = () => {
+    if (id) {
+      dispatch(enrollInCourse(Number(id)));
+      setIsEnrolled(true);
+      toast.success(`${user?.name} has successfully enrolled on this course`);
+    }
+  };
+
   if (courseLoading || lessonLoading) return <Spinner />;
   if (courseError) return <p>Error loading course: {courseError}</p>;
   if (lessonError) return <p>Error loading lessons: {lessonError}</p>;
@@ -48,7 +63,7 @@ const CourseDetails = () => {
       </p>
 
       {course.videoUrl && (
-        <div style={{ marginBottom: "30px" }}>
+        <div style={{ marginBottom: "20px" }}>
           <h3>Course Overview</h3>
           <video width="100%" controls>
             <source src={course.videoUrl} type="video/mp4" />
@@ -57,8 +72,24 @@ const CourseDetails = () => {
         </div>
       )}
 
+      {isAuthenticated && user?.role === "Learner" && (
+        <Button
+          disabled={isEnrolled}
+          colorScheme="blue"
+          mt={4}
+          onClick={handleEnroll}
+        >
+          {isEnrolled ? "Enrolled" : "Enroll in course"}
+        </Button>
+      )}
+
       <h2
-        style={{ fontSize: "22px", fontWeight: "bold", marginBottom: "10px" }}
+        style={{
+          fontSize: "22px",
+          fontWeight: "bold",
+          marginBottom: "10px",
+          marginTop: "30px",
+        }}
       >
         Lessons
       </h2>
@@ -127,6 +158,7 @@ const CourseDetails = () => {
           </p>
         )}
       </div>
+      <ToastContainer />
     </div>
   );
 };

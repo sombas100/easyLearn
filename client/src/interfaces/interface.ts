@@ -29,7 +29,8 @@ export interface Enrollment {
         email: string 
     }
     course: {
-        title: string
+        title: string,
+        courseId: number
     }
     progress: number;
     certificateUrl?: string;

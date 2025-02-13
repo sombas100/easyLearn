@@ -6,9 +6,12 @@ import {
   fetchEnrollments,
   updateEnrollmentProgress,
 } from "@/redux/slices/enrollmentSlice";
+import { FaLongArrowAltLeft } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const AdminEnrollments = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const { enrollments, loading } = useSelector(
     (state: RootState) => state.enrollments
   );
@@ -16,10 +19,6 @@ const AdminEnrollments = () => {
   const [progressUpdates, setProgressUpdates] = useState<{
     [courseId: number]: number;
   }>({});
-
-  useEffect(() => {
-    dispatch(fetchEnrollments());
-  }, [dispatch]);
 
   const handleProgressChange = (courseId: number, value: number) => {
     setProgressUpdates((prev) => ({ ...prev, [courseId]: value }));
@@ -36,17 +35,35 @@ const AdminEnrollments = () => {
     }
   };
 
+  useEffect(() => {
+    console.log("Dispatching fetchEnrollments...");
+    dispatch(fetchEnrollments());
+  }, [dispatch]);
+
+  useEffect(() => {
+    console.log(
+      "✅ Updated Redux enrollments:",
+      JSON.stringify(enrollments, null, 2)
+    );
+  }, [enrollments]);
   return (
     <Box p={6}>
       <Heading size="lg" mb={4}>
         Manage Enrollments
       </Heading>
+      <Heading size="lg" mb={4}>
+        <button
+          onClick={() => navigate("/admin/dashboard")}
+          className="cursor-pointer"
+        >
+          <FaLongArrowAltLeft size={24} />
+        </button>
+      </Heading>
 
-      {loading && !enrollments ? (
-        <>
-          <Spinner />
-          <p>No enrollments available</p>
-        </>
+      {loading ? (
+        <Spinner />
+      ) : enrollments.length === 0 ? (
+        <p>No enrollments found.</p>
       ) : (
         <div style={{ overflowX: "auto" }}>
           <table
@@ -76,8 +93,12 @@ const AdminEnrollments = () => {
                   key={enrollment.enrollmentId}
                   style={{ borderBottom: "1px solid #ddd" }}
                 >
-                  <td style={tableCellStyle}>{enrollment.user.name}</td>
-                  <td style={tableCellStyle}>{enrollment.course.title}</td>
+                  <td style={tableCellStyle}>
+                    {enrollment.User?.name ?? "Unknown User"}
+                  </td>
+                  <td style={tableCellStyle}>
+                    {enrollment.Course?.title ?? "Unknown Course"}
+                  </td>
                   <td style={tableCellStyle}>{enrollment.progress}%</td>
                   <td style={tableCellStyle}>
                     <Input
@@ -93,9 +114,9 @@ const AdminEnrollments = () => {
                       size="sm"
                     />
                     <Button
+                      mt={2}
                       size="sm"
                       colorScheme="blue"
-                      ml={2}
                       onClick={() =>
                         handleUpdateProgress(enrollment.enrollmentId)
                       }

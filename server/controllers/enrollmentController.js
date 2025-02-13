@@ -6,6 +6,11 @@ const enrollInCourse = async (req, res) => {
     const userId = req.user.userId;
 
     try {
+        const user = await User.findByPk(userId)
+        if (!user || user.role !== 'Learner'){
+            return res.status(403).json({ message: 'Only learners can enroll in courses'})
+        }
+
         const course = await Course.findByPk(courseId);
         if (!course) {
             return res.status(404).json({ message: 'Course not found' });
@@ -27,7 +32,17 @@ const getAllEnrollments = async (req, res) => {
     if (req.user.role !== 'Admin') return res.status(403).json({ message: 'Forbidden' });
 
     try {
-        const enrollments = await Enrollment.findAll({ include: [User, Course] });
+        const enrollments = await Enrollment.findAll({ include: [
+            {
+                model: User,
+                attributes: ["userId", "name", "email"],
+            },
+            {
+                model: Course, 
+                attributes: ["courseId", "title"]
+            },
+        ],
+         });
         if (enrollments.length === 0) {
             return res.status(404).json({ message: 'No enrollments found' });
         }
