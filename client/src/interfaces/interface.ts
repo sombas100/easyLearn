@@ -24,11 +24,11 @@ export interface Course {
 
 export interface Enrollment {
     enrollmentId: number;
-    user: { 
+    User?: { 
         name: string, 
         email: string 
     }
-    course: {
+    Course?: {
         title: string,
         courseId: number
     }

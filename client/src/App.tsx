@@ -10,6 +10,7 @@ import AdminCourses from "./pages/admin/AdminCourses";
 import AddCourse from "./pages/admin/AddCourse";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminEnrollments from "./pages/admin/AdminEnrollments";
+import LessonDetails from "./components/LessonDetails";
 
 function App() {
   const location = useLocation();
@@ -21,8 +22,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/courses/:id" element={<CourseDetails />} />
+        <Route path="/lessons/:id" element={<LessonDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
         <Route element={<AdminRoute />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/courses" element={<AdminCourses />} />

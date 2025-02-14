@@ -28,9 +28,9 @@ const Navbar = () => {
           />
         </Link>
 
-        <div
-          style={{ fontWeight: "bold", fontSize: "20px" }}
-        >{`Welcome, ${user?.name}!`}</div>
+        <div style={{ fontWeight: "bold", fontSize: "20px" }}>
+          {user ? `Welcome ${user.name}!` : ""}
+        </div>
 
         <div className="flex gap-4 max-sm:text-xs items-center">
           {isAuthenticated ? (
