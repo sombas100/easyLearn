@@ -9,11 +9,13 @@ import { Link } from "react-router-dom";
 import { enrollInCourse } from "@/redux/slices/enrollmentSlice";
 import { Button } from "@chakra-ui/react";
 import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const CourseDetails = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const { user, isAuthenticated } = useSelector(
     (state: RootState) => state.auth
@@ -42,7 +44,9 @@ const CourseDetails = () => {
     if (id) {
       dispatch(enrollInCourse(Number(id)));
       setIsEnrolled(true);
-      toast.success(`${user?.name} has successfully enrolled on this course`);
+      toast.success(
+        `${user?.name} has successfully enrolled on course: ${course?.title}`
+      );
     }
   };
 
@@ -82,6 +86,10 @@ const CourseDetails = () => {
           {isEnrolled ? "Enrolled" : "Enroll in course"}
         </Button>
       )}
+
+      <Button mt={4} ml={5} onClick={() => navigate("/")}>
+        Return to homepage
+      </Button>
 
       <h2
         style={{
