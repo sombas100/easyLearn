@@ -29,7 +29,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ placeholder = "Search..." }) => {
         backgroundColor: "#fff",
         borderRadius: "8px",
         padding: "5px",
-        width: "100%",
+        width: "95%",
       }}
     >
       <input
