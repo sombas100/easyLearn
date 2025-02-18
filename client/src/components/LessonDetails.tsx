@@ -18,6 +18,7 @@ const LessonDetails = () => {
   const { lesson, lessons, loading, error } = useSelector(
     (state: RootState) => state.lessons
   );
+
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
@@ -88,6 +89,8 @@ const LessonDetails = () => {
               Next Lesson
             </Button>
           )}
+
+          <Button onClick={() => navigate("/")}>Return to menu</Button>
         </div>
       )}
       <ToastContainer />

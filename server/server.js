@@ -9,6 +9,7 @@ const userRoutes = require('./routes/userRoutes');
 const courseRoutes = require('./routes/courseRoutes');
 const lessonRoutes = require('./routes/lessonRoutes');
 const enrollmentRoutes = require('./routes/enrollmentRoutes');
+const statRoutes = require('./routes/statRoutes')
 
 const PORT = process.env.PORT || 3000;
 
@@ -20,9 +21,10 @@ app.use('/api/users', userRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/enrollments', enrollmentRoutes);
+app.use('/api', statRoutes);
 
 app.get('/test', (req, res, next) => {
-    res.send('I hate humans');
+    res.send('Lilli has a massive head');
     next();
 })
 

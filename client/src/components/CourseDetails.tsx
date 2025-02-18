@@ -1,21 +1,20 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState, useMemo } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCourseById } from "@/redux/slices/courseSlice";
 import { fetchLessons } from "@/redux/slices/lessonSlice";
 import { RootState, AppDispatch } from "@/redux/store";
-import { Spinner } from "@chakra-ui/react";
+import { Button, Spinner } from "@chakra-ui/react";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { enrollInCourse } from "@/redux/slices/enrollmentSlice";
-import { Button } from "@chakra-ui/react";
-import { ToastContainer, toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
 const CourseDetails = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
-  const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
 
   const { user, isAuthenticated } = useSelector(
     (state: RootState) => state.auth
@@ -30,6 +29,7 @@ const CourseDetails = () => {
     loading: lessonLoading,
     error: lessonError,
   } = useSelector((state: RootState) => state.lessons);
+  const { enrollments } = useSelector((state: RootState) => state.enrollments);
 
   const course = courses.length > 0 ? courses[0] : null;
 
@@ -40,13 +40,46 @@ const CourseDetails = () => {
     }
   }, [id, dispatch]);
 
+  const isCompleted = useMemo(() => {
+    const enrollment = enrollments.find(
+      (enrollment) =>
+        enrollment.Course?.courseId === Number(id) &&
+        enrollment.User?.userId === user?.userId
+    );
+    return enrollment?.progress === 100;
+  }, [enrollments, id, user]);
+
   const handleEnroll = () => {
     if (id) {
       dispatch(enrollInCourse(Number(id)));
       setIsEnrolled(true);
       toast.success(
-        `${user?.name} has successfully enrolled on course: ${course?.title}`
+        `User "${user?.name}" has successfully enrolled in "${course?.title}"`
       );
+    }
+  };
+
+  const handleDownloadCertificate = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `http://localhost:3000/api/enrollments/certificate/${user?.userId}/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          responseType: "blob",
+        }
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Certificate-${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      toast.success("Certificate downloaded successfully!");
+    } catch (error) {
+      console.error("Error downloading certificate:", error);
+      toast.error("Failed to download certificate. Please try again.");
     }
   };
 
@@ -68,7 +101,7 @@ const CourseDetails = () => {
 
       {course.videoUrl && (
         <div style={{ marginBottom: "20px" }}>
-          <h3>Course Overview</h3>
+          <h3 style={{ marginBottom: "8px" }}>Course Overview</h3>
           <video width="100%" controls>
             <source src={course.videoUrl} type="video/mp4" />
             Your browser does not support the video tag.
@@ -83,12 +116,23 @@ const CourseDetails = () => {
           mt={4}
           onClick={handleEnroll}
         >
-          {isEnrolled ? "Enrolled" : "Enroll in course"}
+          {isEnrolled ? "Enrolled" : "Enroll in Course"}
+        </Button>
+      )}
+
+      {isCompleted && (
+        <Button
+          colorScheme="green"
+          mt={4}
+          ml={3}
+          onClick={handleDownloadCertificate}
+        >
+          Download Certificate
         </Button>
       )}
 
       <Button mt={4} ml={5} onClick={() => navigate("/")}>
-        Return to homepage
+        Return to Homepage
       </Button>
 
       <h2

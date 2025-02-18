@@ -4,6 +4,7 @@ import courseReducer from './slices/courseSlice';
 import lessonReducer from './slices/lessonSlice';
 import userReducer from './slices/userSlice';
 import enrollmentReducer from './slices/enrollmentSlice';
+import statsReducer from './slices/statsSlice';
 
 const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
         lessons: lessonReducer,
         users: userReducer,
         enrollments: enrollmentReducer,
+        stats: statsReducer,
     }
 });
 

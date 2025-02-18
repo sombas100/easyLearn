@@ -1,10 +1,25 @@
-import { Box, Heading, SimpleGrid, Text } from "@chakra-ui/react";
+import { Box, Heading, SimpleGrid, Spinner, Text } from "@chakra-ui/react";
 import AdminSidebar from "@/components/AdminSidebar";
 import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { RootState, AppDispatch } from "@/redux/store";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { fetchStats } from "@/redux/slices/statsSlice";
 
 const AdminDashboard = () => {
   const { user } = useSelector((state: RootState) => state.auth);
+  const { stats, loading, error } = useSelector(
+    (state: RootState) => state.stats
+  );
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(fetchStats());
+  }, [dispatch]);
+
+  if (loading) return <Spinner />;
+  if (error)
+    return <Text color="red.500">Failed to retrieve stats: {error}</Text>;
 
   return (
     <Box display="flex" minH="100vh">
@@ -30,7 +45,7 @@ const AdminDashboard = () => {
             textAlign="center"
           >
             <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="bold">
-              100
+              {stats?.users || "0"}
             </Text>
             <Text fontSize={{ base: "sm", md: "md" }}>Registered Users</Text>
           </Box>
@@ -43,7 +58,7 @@ const AdminDashboard = () => {
             textAlign="center"
           >
             <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="bold">
-              25
+              {stats?.courses || "0"}
             </Text>
             <Text fontSize={{ base: "sm", md: "md" }}>Courses Available</Text>
           </Box>
@@ -56,7 +71,7 @@ const AdminDashboard = () => {
             textAlign="center"
           >
             <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="bold">
-              500
+              {stats?.enrollments || "0"}
             </Text>
             <Text fontSize={{ base: "sm", md: "md" }}>Enrollments</Text>
           </Box>

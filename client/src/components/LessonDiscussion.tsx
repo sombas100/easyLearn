@@ -6,7 +6,9 @@ const LessonDiscussion: React.FC = () => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<string[]>([]);
 
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { user, isAuthenticated } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   const handlePostComment = () => {
     if (comment.trim()) {
@@ -19,13 +21,15 @@ const LessonDiscussion: React.FC = () => {
     <div
       style={{ marginTop: "30px", padding: "20px", border: "1px solid #ddd" }}
     >
-      <h3>Discussion</h3>
+      <h3 style={{ fontWeight: "bold", marginBottom: "14px" }}>
+        Discussion Thread
+      </h3>
       {comments.map((c, index) => (
         <p
           key={index}
           style={{ borderBottom: "1px solid #ddd", padding: "5px 0" }}
         >
-          {c}
+          {user?.name}: {c}
         </p>
       ))}
       {isAuthenticated && (
@@ -46,6 +50,7 @@ const LessonDiscussion: React.FC = () => {
               color: "white",
               border: "none",
               cursor: "pointer",
+              marginTop: "14px",
             }}
           >
             Post comment

@@ -26,7 +26,8 @@ export interface Enrollment {
     enrollmentId: number;
     User?: { 
         name: string, 
-        email: string 
+        email: string,
+        userId: number,
     }
     Course?: {
         title: string,
