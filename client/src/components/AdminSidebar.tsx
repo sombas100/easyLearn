@@ -32,11 +32,11 @@ const AdminSidebar = () => {
         <Button w="full" onClick={() => navigate("/admin/dashboard")}>
           Dashboard
         </Button>
-        <Button w="full" onClick={() => navigate("/admin/courses")}>
-          Manage Courses
-        </Button>
         <Button w="full" onClick={() => navigate("/admin/users")}>
           Manage Users
+        </Button>
+        <Button w="full" onClick={() => navigate("/admin/courses")}>
+          Manage Courses
         </Button>
         <Button w="full" onClick={() => navigate("/admin/enrollments")}>
           Manage Enrollments

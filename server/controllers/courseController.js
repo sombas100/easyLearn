@@ -69,10 +69,33 @@ const deleteCourse = async (req, res) => {
     }
 };
 
+const searchCourse = async (req, res) => {
+    try {
+        const { query } = req.query;
+    
+        if (!query || typeof query !== "string") {
+          return res.status(400).json({ message: "Query parameter must be a string" });
+        }
+    
+        const courses = await Course.findAll({
+          where: {
+            title: {
+              [Op.iLike]: `%${query}%`
+            },
+          },
+        });
+    
+        res.json(courses);
+      } catch (error) {
+        res.status(500).json({ message: "Internal server error", error: error.message });
+      }
+}
+
 module.exports = {
     createCourse,
     getAllCourses,
     getCourse,
     updateCourse,
     deleteCourse,
+    searchCourse,
 };

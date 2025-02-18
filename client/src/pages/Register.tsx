@@ -24,7 +24,7 @@ const Register = () => {
     e.preventDefault();
     try {
       await registerUser(name, email, password);
-      toast.success("Registration successful! Please log in.");
+      alert("Registration successful! Please log in.");
       navigate("/login");
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Registration failed");
