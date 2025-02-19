@@ -1,4 +1,5 @@
 import axios from "axios";
+
 const API = import.meta.env.VITE_API_URL
 
 export const client = axios.create({
@@ -9,14 +10,14 @@ export const client = axios.create({
 });
 
 client.interceptors.request.use(
-    (config) => {
+    (config: any) => {
         const token = localStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     },
-    (error) => {
+    (error: any) => {
         return Promise.reject(error);
     }
 )
