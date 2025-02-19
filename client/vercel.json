@@ -1,26 +1,6 @@
 {
     "rewrites": [
-      {
-        "source": "/api/(.*)",
-        "destination": "https://easylearn-backend-ufbk.onrender.com/api/$1"
-      }
-    ],
-    "redirects": [
-      {
-        "source": "/courses/:id",
-        "destination": "/",
-        "statusCode": 200
-      },
-      {
-        "source": "/lessons/:id",
-        "destination": "/",
-        "statusCode": 200
-      },
-      {
-        "source": "/search",
-        "destination": "/",
-        "statusCode": 200
-      }
+      { "source": "/(.*)", "destination": "/" }
     ]
   }
   
