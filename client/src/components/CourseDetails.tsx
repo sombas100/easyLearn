@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState, useMemo } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCourseById } from "@/redux/slices/courseSlice";
 import { fetchLessons } from "@/redux/slices/lessonSlice";
 import { RootState, AppDispatch } from "@/redux/store";
-import { Spinner } from "@chakra-ui/react";
-import { Button } from "@chakra-ui/react";
+import { Button, Spinner } from "@chakra-ui/react";
+import { client } from "@/api/axiosConfig";
 import { ToastContainer, toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { enrollInCourse } from "@/redux/slices/enrollmentSlice";
 
 const CourseDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,14 +29,68 @@ const CourseDetails = () => {
     loading: lessonLoading,
     error: lessonError,
   } = useSelector((state: RootState) => state.lessons);
+  const { enrollments } = useSelector((state: RootState) => state.enrollments);
+
+  const course = courses.length > 0 ? courses[0] : null;
 
   useEffect(() => {
     if (!id) return;
-    dispatch(fetchCourseById(id));
-    dispatch(fetchLessons(Number(id)));
+    {
+      dispatch(fetchCourseById(id));
+      dispatch(fetchLessons(Number(id)));
+    }
   }, [id, dispatch]);
 
-  const course = courses.find((c) => c.courseId === Number(id));
+  const isCompleted = useMemo(() => {
+    const enrollment = enrollments.find(
+      (enrollment) =>
+        enrollment.Course?.courseId === Number(id) &&
+        enrollment.User?.userId === user?.userId
+    );
+    return enrollment?.progress === 100;
+  }, [enrollments, id, user]);
+
+  const handleEnroll = () => {
+    if (id) {
+      dispatch(enrollInCourse(Number(id)));
+      setIsEnrolled(true);
+      toast.success(
+        `User "${user?.name}" has successfully enrolled in "${course?.title}"`
+      );
+    }
+  };
+
+  const handleDownloadCertificate = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await client.get(
+        `${import.meta.env.VITE_API_URL}/enrollments/certificate/${
+          user?.userId
+        }/${id}`,
+        {
+          responseType: "blob",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const blob = response.data as Blob;
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Certificate-${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      toast.success("Certificate downloaded successfully!");
+    } catch (error) {
+      console.error("Error downloading certificate:", error);
+      toast.error("Failed to download certificate.");
+    }
+  };
+
   if (courseLoading || lessonLoading) return <Spinner />;
   if (courseError) return <p>Error loading course: {courseError}</p>;
   if (lessonError) return <p>Error loading lessons: {lessonError}</p>;
@@ -54,7 +109,7 @@ const CourseDetails = () => {
 
       {course.videoUrl && (
         <div style={{ marginBottom: "20px" }}>
-          <h3>Course Overview</h3>
+          <h3 style={{ marginBottom: "8px" }}>Course Overview</h3>
           <video width="100%" controls>
             <source src={course.videoUrl} type="video/mp4" />
             Your browser does not support the video tag.
@@ -63,13 +118,29 @@ const CourseDetails = () => {
       )}
 
       {isAuthenticated && user?.role === "Learner" && (
-        <Button disabled={isEnrolled} colorScheme="blue" mt={4}>
-          {isEnrolled ? "Enrolled" : "Enroll in course"}
+        <Button
+          disabled={isEnrolled}
+          colorScheme="blue"
+          mt={4}
+          onClick={handleEnroll}
+        >
+          {isEnrolled ? "Enrolled" : "Enroll in Course"}
+        </Button>
+      )}
+
+      {isCompleted && (
+        <Button
+          colorScheme="green"
+          mt={4}
+          ml={3}
+          onClick={handleDownloadCertificate}
+        >
+          Download Certificate
         </Button>
       )}
 
       <Button mt={4} ml={5} onClick={() => navigate("/")}>
-        Return to homepage
+        Return to Homepage
       </Button>
 
       <h2
@@ -91,24 +162,54 @@ const CourseDetails = () => {
               style={{
                 padding: "15px",
                 borderRadius: "8px",
-                background: "#fff",
+                boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
+                background: "#ffffff",
+                transition: "transform 0.2s ease-in-out",
                 border: "1px solid #ddd",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
               }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.transform = "scale(1.03)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.transform = "scale(1)")
+              }
             >
               <div>
                 <h3 style={{ fontSize: "18px", margin: "0" }}>
                   {lesson.title}
                 </h3>
+                <p
+                  style={{ fontSize: "14px", color: "#666", marginTop: "5px" }}
+                >
+                  {lesson.content.length > 80
+                    ? lesson.content.substring(0, 80) + "..."
+                    : lesson.content}
+                </p>
               </div>
-              <Button
-                colorScheme="blue"
-                onClick={() => navigate(`/lessons/${lesson.lessonId}`)}
-              >
-                View Lesson
-              </Button>
+              <Link to={`/lessons/${lesson.lessonId}`}>
+                <button
+                  style={{
+                    backgroundColor: "#007BFF",
+                    color: "#fff",
+                    border: "none",
+                    padding: "10px 15px",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    transition: "background 0.2s",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#0056b3")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#007BFF")
+                  }
+                >
+                  View Lesson
+                </button>
+              </Link>
             </div>
           ))
         ) : (
