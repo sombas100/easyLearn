@@ -22,7 +22,7 @@ export const fetchEnrollments = createAsyncThunk<Enrollment[], void, { state: Ro
     const token = state.auth.token;
 
     const res = await client.get<{ enrollments: Enrollment[] }>(
-      "/api/enrollments/all-enrollments",
+      "/enrollments/all-enrollments",
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
@@ -41,7 +41,7 @@ export const fetchEnrollments = createAsyncThunk<Enrollment[], void, { state: Ro
       const token = state.auth.token;
   
       const res = await client.put<{ enrollment: Enrollment }>( 
-        `/api/enrollments/progress`,
+        `/enrollments/progress`,
         { courseId, progress },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -56,7 +56,7 @@ export const fetchEnrollments = createAsyncThunk<Enrollment[], void, { state: Ro
       const token = (getState() as RootState).auth.token;
   
       const res = await client.post<{ enrollment: Enrollment }>( 
-        "/api/enrollments/enroll",
+        "/enrollments/enroll",
         { courseId },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -18,7 +18,7 @@ const initialState: UserState = {
 
 export const fetchUsers = createAsyncThunk("users/fetchUsers", async (_, { getState }) => {
     const token = (getState() as RootState).auth.token;
-    const res = await client.get("/api/users", {
+    const res = await client.get("/users", {
         headers: {
             Authorization: `Bearer ${token}`, 
         },
@@ -34,7 +34,7 @@ export const deleteUser = createAsyncThunk("users/deleteUser", async (id: number
         throw new Error("No authentication token found.");
     }
 
-    await client.delete(`/api/users/${id}`, {
+    await client.delete(`/users/${id}`, {
         headers: {
             Authorization: `Bearer ${token}`, 
         },

@@ -20,7 +20,7 @@ const initialState: LessonState = {
 export const fetchLessons = createAsyncThunk<Lesson[], number>(
     'lessons/fetchLessons',
     async (courseId: number) => {
-      const res = await client.get(`/api/courses/${courseId}/lessons`);
+      const res = await client.get(`/courses/${courseId}/lessons`);
       return res.data as Lesson[]
     }
   );
@@ -28,7 +28,7 @@ export const fetchLessons = createAsyncThunk<Lesson[], number>(
   export const fetchLessonById = createAsyncThunk<Lesson, number>(
     'lessons/fetchLessonById',
     async (lessonId: number) => {
-      const res = await client.get(`/api/lessons/${lessonId}`);
+      const res = await client.get(`/lessons/${lessonId}`);
       return res.data as Lesson
     }
   );

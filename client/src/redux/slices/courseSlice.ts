@@ -18,7 +18,7 @@ const initialState: CourseState = {
 }
 
 export const fetchCourses = createAsyncThunk<Course[], void>('courses/fetchCourses', async () => {
-    const res = await client.get('/api/courses');
+    const res = await client.get('/courses');
     const data = res.data;
     return data as Course[]
 })
@@ -26,7 +26,7 @@ export const fetchCourses = createAsyncThunk<Course[], void>('courses/fetchCours
 export const fetchCourseById = createAsyncThunk<Course, string>(
     'courses/fetchCourseById',
     async (courseId: string) => {
-        const res = await client.get(`/api/courses/${courseId}`);
+        const res = await client.get(`/courses/${courseId}`);
         return res.data as Course;
     }
 );
@@ -37,7 +37,7 @@ export const addCourse = createAsyncThunk<Course, Omit<Course, "courseId">>(
       const token = (getState() as RootState).auth.token;
       if (!token) throw new Error("No authentication token found");
   
-      const res = await client.post("/api/courses", courseData, {
+      const res = await client.post("/courses", courseData, {
         headers: { Authorization: `Bearer ${token}` }, 
       });
   
@@ -52,7 +52,7 @@ export const addCourse = createAsyncThunk<Course, Omit<Course, "courseId">>(
       const token = state.auth.token;
   
       const res = await client.put(
-        `/api/courses/${id}`,
+        `/courses/${id}`,
         courseData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -70,7 +70,7 @@ export const deleteCourse = createAsyncThunk<number, number>(
         throw new Error("No token found, authorization denied.");
       }
   
-      await client.delete(`/api/courses/${id}`, {
+      await client.delete(`/courses/${id}`, {
         headers: { Authorization: `Bearer ${token}` }, 
       });
   
@@ -83,7 +83,7 @@ export const deleteCourse = createAsyncThunk<number, number>(
     async (query, { rejectWithValue }) => {
         try {
             console.log("Searching courses for:", query);
-            const res = await client.get(`/api/courses/search?query=${query}`);
+            const res = await client.get(`/courses/search?query=${query}`);
             return res.data as Course[]; 
         } catch (error: any) {
             console.error("Error searching courses:", error.message);

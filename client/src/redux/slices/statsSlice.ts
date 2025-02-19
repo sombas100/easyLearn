@@ -22,7 +22,7 @@ const initialState: AdminState =  {
 
 export const fetchStats = createAsyncThunk("admin/fetchStats", async (_, { getState }) => {
     const token = (getState() as RootState).auth.token;
-    const res = await client.get("/api/admin/stats", {
+    const res = await client.get("/admin/stats", {
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data as AdminStats
