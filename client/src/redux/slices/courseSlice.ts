@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from 'axios';
+import { client } from "@/api/axiosConfig";
 import { Course } from "@/interfaces/interface";
 import { RootState } from "../store";
 
@@ -18,7 +18,7 @@ const initialState: CourseState = {
 }
 
 export const fetchCourses = createAsyncThunk('courses/fetchCourses', async () => {
-    const res = await axios.get('http://localhost:3000/api/courses');
+    const res = await client.get('/api/courses');
     const data = res.data;
     return data
 })
@@ -26,7 +26,7 @@ export const fetchCourses = createAsyncThunk('courses/fetchCourses', async () =>
 export const fetchCourseById = createAsyncThunk(
     'courses/fetchCourseById',
     async (courseId: string) => {
-        const res = await axios.get(`http://localhost:3000/api/courses/${courseId}`);
+        const res = await client.get(`/api/courses/${courseId}`);
         return res.data;
     }
 );
@@ -37,7 +37,7 @@ export const addCourse = createAsyncThunk(
       const token = (getState() as RootState).auth.token;
       if (!token) throw new Error("No authentication token found");
   
-      const res = await axios.post("http://localhost:3000/api/courses", courseData, {
+      const res = await client.post("/api/courses", courseData, {
         headers: { Authorization: `Bearer ${token}` }, 
       });
   
@@ -51,8 +51,8 @@ export const addCourse = createAsyncThunk(
       const state = getState() as RootState;
       const token = state.auth.token;
   
-      const res = await axios.put(
-        `http://localhost:3000/api/courses/${id}`,
+      const res = await client.put(
+        `/api/courses/${id}`,
         courseData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -70,7 +70,7 @@ export const deleteCourse = createAsyncThunk(
         throw new Error("No token found, authorization denied.");
       }
   
-      await axios.delete(`http://localhost:3000/api/courses/${id}`, {
+      await client.delete(`/api/courses/${id}`, {
         headers: { Authorization: `Bearer ${token}` }, 
       });
   
@@ -83,7 +83,7 @@ export const searchCourses = createAsyncThunk(
     async (query: string) => {
         try {
             console.log("Searching courses for:", query);
-            const res = await axios.get(`http://localhost:3000/api/courses/search?query=${query}`);
+            const res = await client.get(`/api/courses/search?query=${query}`);
             return res.data;
             
         } catch (error: any) {

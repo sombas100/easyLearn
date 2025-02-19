@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Lesson } from "@/interfaces/interface";
-import axios from "axios";
+import { client } from "@/api/axiosConfig";
 
 
 interface LessonState {
@@ -18,13 +18,13 @@ const initialState: LessonState = {
 };
 
 export const fetchLessons = createAsyncThunk('lessons/fetchLessons', async (courseId: number) => {
-    const res = await axios.get(`http://localhost:3000/api/courses/${courseId}/lessons`);
+    const res = await client.get(`/api/courses/${courseId}/lessons`);
     const data = res.data;
     return data;
 })
 
 export const fetchLessonById = createAsyncThunk('lessons/fetchLessonById', async (lessonId: number) => {
-    const res = await axios.get(`http://localhost:3000/api/lessons/${lessonId}`)
+    const res = await client.get(`/api/lessons/${lessonId}`)
     const data = res.data;
     return data
 })

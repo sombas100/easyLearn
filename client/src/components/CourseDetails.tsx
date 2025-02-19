@@ -5,7 +5,7 @@ import { fetchCourseById } from "@/redux/slices/courseSlice";
 import { fetchLessons } from "@/redux/slices/lessonSlice";
 import { RootState, AppDispatch } from "@/redux/store";
 import { Button, Spinner } from "@chakra-ui/react";
-import axios from "axios";
+import { client } from "@/api/axiosConfig";
 import { ToastContainer, toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { enrollInCourse } from "@/redux/slices/enrollmentSlice";
@@ -62,8 +62,8 @@ const CourseDetails = () => {
   const handleDownloadCertificate = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `http://localhost:3000/api/enrollments/certificate/${user?.userId}/${id}`,
+      const response = await client.get(
+        `/api/enrollments/certificate/${user?.userId}/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
           responseType: "blob",

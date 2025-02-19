@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from 'axios';
+import { client } from "@/api/axiosConfig";
 import { RootState } from "../store";
 
 interface AdminStats {
@@ -22,7 +22,7 @@ const initialState: AdminState =  {
 
 export const fetchStats = createAsyncThunk("admin/fetchStats", async (_, { getState }) => {
     const token = (getState() as RootState).auth.token;
-    const res = await axios.get("http://localhost:3000/api/admin/stats", {
+    const res = await client.get("/api/admin/stats", {
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;

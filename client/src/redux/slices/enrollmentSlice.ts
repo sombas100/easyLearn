@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import { client } from "@/api/axiosConfig";
 import { RootState } from "@/redux/store"; 
 import { Enrollment } from "@/interfaces/interface";
 
@@ -22,7 +22,7 @@ export const fetchEnrollments = createAsyncThunk(
       const state = getState() as RootState;
       const token = state.auth.token;
   
-      const res = await axios.get("http://localhost:3000/api/enrollments/all-enrollments", {
+      const res = await client.get("/api/enrollments/all-enrollments", {
         headers: { Authorization: `Bearer ${token}` },
       });
   
@@ -40,8 +40,8 @@ export const updateEnrollmentProgress = createAsyncThunk(
     const state = getState() as RootState; 
     const token = state.auth.token;
 
-    const res = await axios.put(
-      `http://localhost:3000/api/enrollments/progress`,
+    const res = await client.put(
+      `/api/enrollments/progress`,
       { courseId, progress },
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -51,8 +51,8 @@ export const updateEnrollmentProgress = createAsyncThunk(
 
 export const enrollInCourse = createAsyncThunk("enrollments/enroll", async (courseId: number, { getState }) => {
     const token = (getState() as RootState).auth.token;
-    const res = await axios.post(
-      "http://localhost:3000/api/enrollments/enroll",
+    const res = await client.post(
+      "/api/enrollments/enroll",
       { courseId },
       { headers: { Authorization: `Bearer ${token}` } }
     );

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction, } from "@reduxjs/toolkit";
-import axios from "axios";
+import { client } from "@/api/axiosConfig";
 import { User } from "@/interfaces/interface";
 import { RootState } from "../store";
 
@@ -18,7 +18,7 @@ const initialState: UserState = {
 
 export const fetchUsers = createAsyncThunk("users/fetchUsers", async (_, { getState }) => {
     const token = (getState() as RootState).auth.token;
-    const res = await axios.get("http://localhost:3000/api/users", {
+    const res = await client.get("/api/users", {
         headers: {
             Authorization: `Bearer ${token}`, 
         },
@@ -34,7 +34,7 @@ export const deleteUser = createAsyncThunk("users/deleteUser", async (id: number
         throw new Error("No authentication token found.");
     }
 
-    await axios.delete(`http://localhost:3000/api/users/${id}`, {
+    await client.delete(`/api/users/${id}`, {
         headers: {
             Authorization: `Bearer ${token}`, 
         },
