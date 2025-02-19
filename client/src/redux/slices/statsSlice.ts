@@ -25,7 +25,7 @@ export const fetchStats = createAsyncThunk("admin/fetchStats", async (_, { getSt
     const res = await client.get("/api/admin/stats", {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return res.data;
+    return res.data as AdminStats
   });
 
   const statsSlice = createSlice({

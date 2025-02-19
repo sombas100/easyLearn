@@ -17,21 +17,21 @@ const initialState: CourseState = {
     error: null,
 }
 
-export const fetchCourses = createAsyncThunk('courses/fetchCourses', async () => {
+export const fetchCourses = createAsyncThunk<Course[], void>('courses/fetchCourses', async () => {
     const res = await client.get('/api/courses');
     const data = res.data;
-    return data
+    return data as Course[]
 })
 
-export const fetchCourseById = createAsyncThunk(
+export const fetchCourseById = createAsyncThunk<Course, string>(
     'courses/fetchCourseById',
     async (courseId: string) => {
         const res = await client.get(`/api/courses/${courseId}`);
-        return res.data;
+        return res.data as Course;
     }
 );
 
-export const addCourse = createAsyncThunk(
+export const addCourse = createAsyncThunk<Course, Omit<Course, "courseId">>(
     "courses/addCourse",
     async (courseData: Omit<Course, "courseId">, { getState }) => {
       const token = (getState() as RootState).auth.token;
@@ -41,11 +41,11 @@ export const addCourse = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` }, 
       });
   
-      return res.data;
+      return res.data as Course;
     }
   );
 
-  export const updateCourse = createAsyncThunk(
+  export const updateCourse = createAsyncThunk<Course, { id: number; courseData: Partial<Course> }>(
     "courses/updateCourse",
     async ({ id, courseData }: { id: number; courseData: Partial<Course> }, { getState }) => {
       const state = getState() as RootState;
@@ -57,10 +57,10 @@ export const addCourse = createAsyncThunk(
         { headers: { Authorization: `Bearer ${token}` } }
       );
   
-      return res.data;
+      return res.data as Course
     }
   );
-export const deleteCourse = createAsyncThunk(
+export const deleteCourse = createAsyncThunk<number, number>(
     "courses/deleteCourse",
     async (id: number, { getState }) => {
       const state = getState() as RootState;
@@ -78,19 +78,20 @@ export const deleteCourse = createAsyncThunk(
     }
   );
 
-export const searchCourses = createAsyncThunk(
-    'courses/searchCourses',
-    async (query: string) => {
+  export const searchCourses = createAsyncThunk<Course[], string>(
+    "courses/searchCourses",
+    async (query, { rejectWithValue }) => {
         try {
             console.log("Searching courses for:", query);
             const res = await client.get(`/api/courses/search?query=${query}`);
-            return res.data;
-            
+            return res.data as Course[]; 
         } catch (error: any) {
-            console.error('error', error.message)   
+            console.error("Error searching courses:", error.message);
+            return rejectWithValue(error.response?.data?.message || "Search failed"); 
         }
     }
 );
+
 
 const courseSlice = createSlice({
     name: 'courses',

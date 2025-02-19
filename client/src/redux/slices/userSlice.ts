@@ -24,7 +24,7 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async (_, { getSt
         },
     });
 
-  return res.data;
+  return res.data as User[]
 });
 
 

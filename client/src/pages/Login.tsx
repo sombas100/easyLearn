@@ -14,6 +14,7 @@ import { AppDispatch } from "@/redux/store";
 import { loginUser } from "@/api/auth";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { AuthResponse } from "@/api/auth";
 
 const Login = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -26,7 +27,7 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const data = await loginUser(email, password);
+      const data: AuthResponse = await loginUser(email, password);
 
       dispatch(login({ user: data.user, token: data.token }));
       navigate("/");

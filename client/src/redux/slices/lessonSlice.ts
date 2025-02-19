@@ -17,17 +17,21 @@ const initialState: LessonState = {
     error: null,
 };
 
-export const fetchLessons = createAsyncThunk('lessons/fetchLessons', async (courseId: number) => {
-    const res = await client.get(`/api/courses/${courseId}/lessons`);
-    const data = res.data;
-    return data;
-})
+export const fetchLessons = createAsyncThunk<Lesson[], number>(
+    'lessons/fetchLessons',
+    async (courseId: number) => {
+      const res = await client.get(`/api/courses/${courseId}/lessons`);
+      return res.data as Lesson[]
+    }
+  );
 
-export const fetchLessonById = createAsyncThunk('lessons/fetchLessonById', async (lessonId: number) => {
-    const res = await client.get(`/api/lessons/${lessonId}`)
-    const data = res.data;
-    return data
-})
+  export const fetchLessonById = createAsyncThunk<Lesson, number>(
+    'lessons/fetchLessonById',
+    async (lessonId: number) => {
+      const res = await client.get(`/api/lessons/${lessonId}`);
+      return res.data as Lesson
+    }
+  );
 
 
 const lessonSlice = createSlice({

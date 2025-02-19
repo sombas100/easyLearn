@@ -15,49 +15,55 @@ const initialState: EnrollmentState = {
   error: null,
 };
 
-
-export const fetchEnrollments = createAsyncThunk(
-    "enrollments/fetchEnrollments",
-    async (_, { getState }) => {
-      const state = getState() as RootState;
-      const token = state.auth.token;
-  
-      const res = await client.get("/api/enrollments/all-enrollments", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-  
-      console.log("Enrollments fetched:", res.data); 
-  
-      return res.data;
-    }
-  );
-  
-
-
-export const updateEnrollmentProgress = createAsyncThunk(
-  "enrollments/updateProgress",
-  async ({ courseId, progress }: { courseId: number; progress: number }, { getState }) => {
-    const state = getState() as RootState; 
+export const fetchEnrollments = createAsyncThunk<Enrollment[], void, { state: RootState }>(
+  "enrollments/fetchEnrollments",
+  async (_, { getState }) => {
+    const state = getState();
     const token = state.auth.token;
 
-    const res = await client.put(
-      `/api/enrollments/progress`,
-      { courseId, progress },
+    const res = await client.get<{ enrollments: Enrollment[] }>(
+      "/api/enrollments/all-enrollments",
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    return res.data.enrollment;
+
+    console.log("Enrollments fetched:", res.data.enrollments);
+    return res.data.enrollments;
   }
 );
 
-export const enrollInCourse = createAsyncThunk("enrollments/enroll", async (courseId: number, { getState }) => {
-    const token = (getState() as RootState).auth.token;
-    const res = await client.post(
-      "/api/enrollments/enroll",
-      { courseId },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    return res.data.enrollment;
-  });
+
+  
+
+  export const updateEnrollmentProgress = createAsyncThunk(
+    "enrollments/updateProgress",
+    async ({ courseId, progress }: { courseId: number; progress: number }, { getState }) => {
+      const state = getState() as RootState; 
+      const token = state.auth.token;
+  
+      const res = await client.put<{ enrollment: Enrollment }>( 
+        `/api/enrollments/progress`,
+        { courseId, progress },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      return res.data.enrollment;
+    }
+  );
+
+  export const enrollInCourse = createAsyncThunk(
+    "enrollments/enroll", 
+    async (courseId: number, { getState }) => {
+      const token = (getState() as RootState).auth.token;
+  
+      const res = await client.post<{ enrollment: Enrollment }>( 
+        "/api/enrollments/enroll",
+        { courseId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      return res.data.enrollment;
+    }
+  );
 
 const enrollmentSlice = createSlice({
   name: "enrollments",

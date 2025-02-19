@@ -62,24 +62,31 @@ const CourseDetails = () => {
   const handleDownloadCertificate = async () => {
     try {
       const token = localStorage.getItem("token");
+
       const response = await client.get(
-        `/api/enrollments/certificate/${user?.userId}/${id}`,
+        `${import.meta.env.VITE_API_URL}/enrollments/certificate/${
+          user?.userId
+        }/${id}`,
         {
-          headers: { Authorization: `Bearer ${token}` },
           responseType: "blob",
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const blob = response.data as Blob;
+
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", `Certificate-${id}.pdf`);
       document.body.appendChild(link);
       link.click();
+      link.remove();
+
       toast.success("Certificate downloaded successfully!");
     } catch (error) {
       console.error("Error downloading certificate:", error);
-      toast.error("Failed to download certificate. Please try again.");
+      toast.error("Failed to download certificate.");
     }
   };
 
