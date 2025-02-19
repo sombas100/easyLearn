@@ -43,7 +43,7 @@ const connectDb = async () => {
 (async () => {
     console.log('Attemping to connect to the database...')
     await connectDb();
-    app.listen(PORT, () => console.log(`Server is listening on PORT: ${PORT}`))
+    app.listen(PORT, '0.0.0.0', () => console.log(`Server is listening on PORT: ${PORT}`))
 
 })();
 
